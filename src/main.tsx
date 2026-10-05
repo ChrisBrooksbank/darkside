@@ -1,5 +1,5 @@
-import { StrictMode, useState } from "react";
-import type { CSSProperties, ReactNode } from "react";
+import { StrictMode, useRef, useState } from "react";
+import type { CSSProperties, KeyboardEvent, ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import {
   AudioLines,
@@ -260,6 +260,25 @@ function TrackOrbit({
   setActive: (value: number) => void;
   selected: Track;
 }) {
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const last = tracks.length - 1;
+    const keyMap: Record<string, number> = {
+      ArrowDown: active === last ? 0 : active + 1,
+      ArrowRight: active === last ? 0 : active + 1,
+      ArrowUp: active === 0 ? last : active - 1,
+      ArrowLeft: active === 0 ? last : active - 1,
+      Home: 0,
+      End: last,
+    };
+    const next = keyMap[event.key];
+    if (next === undefined) return;
+    event.preventDefault();
+    setActive(next);
+    tabRefs.current[next]?.focus();
+  };
+
   return (
     <section className="section section--orbit" id="orbit" aria-labelledby="orbit-title">
       <div className="section__heading">
@@ -267,14 +286,26 @@ function TrackOrbit({
         <h2 id="orbit-title">One continuous pressure change</h2>
       </div>
       <div className="orbitLayout">
-        <div className="trackDial" role="tablist" aria-label="Album tracks">
+        <div
+          className="trackDial"
+          role="tablist"
+          aria-label="Album tracks"
+          aria-orientation="vertical"
+          onKeyDown={handleKeyDown}
+        >
           {tracks.map((track, index) => (
             <button
               key={track.title}
+              ref={(node) => {
+                tabRefs.current[index] = node;
+              }}
+              id={`track-tab-${index}`}
               className={index === active ? "trackNode isActive" : "trackNode"}
               type="button"
               role="tab"
               aria-selected={index === active}
+              aria-controls="track-chamber"
+              tabIndex={index === active ? 0 : -1}
               onClick={() => setActive(index)}
               style={{ "--node-color": track.color } as CSSProperties}
             >
@@ -283,7 +314,12 @@ function TrackOrbit({
             </button>
           ))}
         </div>
-        <article className="chamber">
+        <article
+          className="chamber"
+          id="track-chamber"
+          role="tabpanel"
+          aria-labelledby={`track-tab-${active}`}
+        >
           <div className="chamber__visual">
             <Waveform color={selected.color} active={active} />
             <div className="chamber__moon">
@@ -309,7 +345,7 @@ function TrackOrbit({
 function Waveform({ color, active }: { color: string; active: number }) {
   const bars = Array.from({ length: 28 }, (_, index) => {
     const wave = 38 + Math.abs(Math.sin((index + active) * 0.65)) * 76;
-    return <i key={index} style={{ height: `${wave}px`, background: color }} />;
+    return <i key={index} style={{ height: `${wave}px`, background: color, color }} />;
   });
 
   return <div className="waveform">{bars}</div>;
