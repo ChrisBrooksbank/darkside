@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" width="1200" height="300" role="img" aria-label="Enter The Prism">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="55%" r="60%">
+      <stop offset="0" stop-color="#1a1416"/>
+      <stop offset="1" stop-color="#050505"/>
+    </radialGradient>
+    <linearGradient id="white" x1="0" x2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#fff"/>
+    </linearGradient>
+    <linearGradient id="fade" x1="0" x2="1">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <mask id="fadeMask">
+      <rect x="700" y="0" width="560" height="300" fill="url(#fade)"/>
+    </mask>
+    <style>
+      .ray { stroke-width: 3; stroke-linecap: round; animation: pulse 4.8s ease-in-out infinite; }
+      @keyframes pulse { 0%, 100% { opacity: .45 } 50% { opacity: 1 } }
+      @media (prefers-reduced-motion: reduce) { .ray { animation: none } }
+    </style>
+  </defs>
+  <rect width="1200" height="300" fill="url(#glow)"/>
+  <g fill="#fff" opacity=".55">
+    <circle cx="80" cy="40" r="1"/><circle cx="210" cy="90" r=".8"/><circle cx="340" cy="30" r="1.1"/>
+    <circle cx="470" cy="70" r=".7"/><circle cx="900" cy="35" r="1"/><circle cx="1040" cy="80" r=".8"/>
+    <circle cx="1150" cy="30" r="1.2"/><circle cx="140" cy="250" r=".8"/><circle cx="1110" cy="260" r=".9"/>
+    <circle cx="760" cy="60" r=".6"/><circle cx="30" cy="160" r=".7"/><circle cx="1180" cy="170" r=".7"/>
+  </g>
+  <ellipse cx="600" cy="760" rx="900" ry="520" fill="#0d0c0c" stroke="#ffffff" stroke-opacity=".16"/>
+  <path d="M0 262 L640 196" stroke="url(#white)" stroke-width="3" stroke-linecap="round"/>
+  <path d="M676 92 L748 236 H604 Z" fill="#ffffff" fill-opacity=".05" stroke="#f7f2e8" stroke-opacity=".8" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M676 92 L690 236" stroke="#f7f2e8" stroke-opacity=".35" stroke-width="1.5"/>
+  <g mask="url(#fadeMask)">
+    <path class="ray" d="M712 186 L1200 40" stroke="#ff4b4b"/>
+    <path class="ray" d="M713 190 L1200 78" stroke="#ffe25f" style="animation-delay:.2s"/>
+    <path class="ray" d="M714 194 L1200 116" stroke="#65f06f" style="animation-delay:.4s"/>
+    <path class="ray" d="M715 198 L1200 154" stroke="#55c8ff" style="animation-delay:.6s"/>
+  </g>
+  <path d="M640 196 L712 190" stroke="#fff" stroke-opacity=".45" stroke-width="2"/>
+  <text x="60" y="120" text-anchor="start" fill="#f7f2e8" font-family="Inter, Helvetica, Arial, sans-serif" font-size="30" font-weight="800" letter-spacing="9">ENTER THE PRISM</text>
+  <text x="60" y="152" fill="#f7f2e8" fill-opacity=".6" font-family="Inter, Helvetica, Arial, sans-serif" font-size="15" letter-spacing="3">A LISTENING OBSERVATORY · TEN TRACKS · ONE ORBIT</text>
+</svg>

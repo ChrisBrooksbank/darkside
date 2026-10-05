@@ -1,5 +1,5 @@
-import { StrictMode, useState } from "react";
-import type { CSSProperties, ReactNode } from "react";
+import { StrictMode, useRef, useState } from "react";
+import type { CSSProperties, KeyboardEvent, ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import {
   AudioLines,
@@ -26,7 +26,20 @@ type Track = {
   accent: string;
   signal: string;
   note: string;
+  themes: ThemeName[];
 };
+
+type ThemeName = (typeof themeNames)[number];
+
+const themeNames = [
+  "Mortality",
+  "Time",
+  "Capital",
+  "Motion",
+  "Empathy",
+  "Identity",
+  "Totality",
+] as const;
 
 type StudioObject = {
   title: string;
@@ -42,6 +55,7 @@ const tracks: Track[] = [
     accent: "Fragments gather before the record fully opens its eye.",
     signal: "heartbeat / voices / pressure",
     note: "A collage of motifs primes the whole journey: machinery, laughter, money, fear, and breath.",
+    themes: ["Mortality", "Identity"],
   },
   {
     title: "Breathe",
@@ -50,6 +64,7 @@ const tracks: Track[] = [
     accent: "The first release of oxygen after the opening pressure.",
     signal: "slide guitar / drifting organ",
     note: "Gilmour's vocal and Wright's harmonic bed make resignation feel weightless.",
+    themes: ["Time", "Mortality"],
   },
   {
     title: "On the Run",
@@ -58,6 +73,7 @@ const tracks: Track[] = [
     accent: "A machine panic attack with boarding lights flashing in the dark.",
     signal: "sequencer / airport anxiety",
     note: "The EMS Synthi becomes a nervous system, turning travel into velocity and dread.",
+    themes: ["Motion", "Mortality"],
   },
   {
     title: "Time",
@@ -66,6 +82,7 @@ const tracks: Track[] = [
     accent: "Clockwork as a moral shock: one day you notice the years moved first.",
     signal: "clocks / toms / guitar solo",
     note: "Mason's entrance turns alarm into body; the track lands like a remembered deadline.",
+    themes: ["Time", "Mortality"],
   },
   {
     title: "The Great Gig in the Sky",
@@ -74,6 +91,7 @@ const tracks: Track[] = [
     accent: "A wordless ascent through grief, terror, and surrender.",
     signal: "voice / piano / space",
     note: "Clare Torry's performance gives mortality a human voltage that words could flatten.",
+    themes: ["Mortality", "Empathy"],
   },
   {
     title: "Money",
@@ -82,6 +100,7 @@ const tracks: Track[] = [
     accent: "Satire in seven-beat machinery, all appetite and chrome.",
     signal: "cash loop / bass / sax",
     note: "Waters' riff and the register loop make capitalism sound catchy, funny, and ugly.",
+    themes: ["Capital", "Identity"],
   },
   {
     title: "Us and Them",
@@ -90,6 +109,7 @@ const tracks: Track[] = [
     accent: "A slow pan across conflict, class, and the ache of separation.",
     signal: "saxophone / choir / dynamics",
     note: "The song expands and collapses like a lens, moving between intimacy and battlefield scale.",
+    themes: ["Empathy", "Capital"],
   },
   {
     title: "Any Colour You Like",
@@ -98,6 +118,7 @@ const tracks: Track[] = [
     accent: "The prism loosens: no thesis, just electricity deciding where to go.",
     signal: "synth / guitar / improvisation",
     note: "A band-as-instrument moment where color becomes groove, not decoration.",
+    themes: ["Motion", "Totality"],
   },
   {
     title: "Brain Damage",
@@ -106,6 +127,7 @@ const tracks: Track[] = [
     accent: "The moon turns inward, and the pressure finally speaks in first person.",
     signal: "choir / acoustic guitar / rupture",
     note: "Its tenderness keeps the subject from becoming spectacle; the fracture remains human.",
+    themes: ["Identity", "Empathy"],
   },
   {
     title: "Eclipse",
@@ -114,6 +136,7 @@ const tracks: Track[] = [
     accent: "Everything under the sun aligns, then vanishes behind the moon.",
     signal: "crescendo / heartbeat / closure",
     note: "The ending feels both universal and tiny: a complete orbit returning to a pulse.",
+    themes: ["Totality", "Time"],
   },
 ];
 
@@ -171,7 +194,9 @@ const legacy = [
 
 function App() {
   const [active, setActive] = useState(0);
-  const [playing, setPlaying] = useState(true);
+  const [playing, setPlaying] = useState(
+    () => !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
   const selected = tracks[active];
 
   return (
@@ -197,7 +222,11 @@ function Hero({
     <section className="hero" aria-labelledby="hero-title">
       <img
         className="hero__image"
-        src="/assets/hero-lunar-prism.png"
+        src="/assets/hero-lunar-prism.webp"
+        width={1885}
+        height={834}
+        fetchPriority="high"
+        decoding="async"
         alt="A dark lunar horizon with a distant glass prism refracting spectral light."
       />
       <div className="hero__shade" />
@@ -219,7 +248,8 @@ function Hero({
             className="iconButton iconButton--primary"
             type="button"
             onClick={() => setPlaying(!playing)}
-            aria-label={playing ? "Pause ambient motion" : "Play ambient motion"}
+            aria-pressed={playing}
+            aria-label="Ambient motion"
             title={playing ? "Pause ambient motion" : "Play ambient motion"}
           >
             {playing ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
@@ -260,6 +290,25 @@ function TrackOrbit({
   setActive: (value: number) => void;
   selected: Track;
 }) {
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const last = tracks.length - 1;
+    const keyMap: Record<string, number> = {
+      ArrowDown: active === last ? 0 : active + 1,
+      ArrowRight: active === last ? 0 : active + 1,
+      ArrowUp: active === 0 ? last : active - 1,
+      ArrowLeft: active === 0 ? last : active - 1,
+      Home: 0,
+      End: last,
+    };
+    const next = keyMap[event.key];
+    if (next === undefined) return;
+    event.preventDefault();
+    setActive(next);
+    tabRefs.current[next]?.focus();
+  };
+
   return (
     <section className="section section--orbit" id="orbit" aria-labelledby="orbit-title">
       <div className="section__heading">
@@ -267,14 +316,26 @@ function TrackOrbit({
         <h2 id="orbit-title">One continuous pressure change</h2>
       </div>
       <div className="orbitLayout">
-        <div className="trackDial" role="tablist" aria-label="Album tracks">
+        <div
+          className="trackDial"
+          role="tablist"
+          aria-label="Album tracks"
+          aria-orientation="vertical"
+          onKeyDown={handleKeyDown}
+        >
           {tracks.map((track, index) => (
             <button
               key={track.title}
+              ref={(node) => {
+                tabRefs.current[index] = node;
+              }}
+              id={`track-tab-${index}`}
               className={index === active ? "trackNode isActive" : "trackNode"}
               type="button"
               role="tab"
               aria-selected={index === active}
+              aria-controls="track-chamber"
+              tabIndex={index === active ? 0 : -1}
               onClick={() => setActive(index)}
               style={{ "--node-color": track.color } as CSSProperties}
             >
@@ -283,7 +344,12 @@ function TrackOrbit({
             </button>
           ))}
         </div>
-        <article className="chamber">
+        <article
+          className="chamber"
+          id="track-chamber"
+          role="tabpanel"
+          aria-labelledby={`track-tab-${active}`}
+        >
           <div className="chamber__visual">
             <Waveform color={selected.color} active={active} />
             <div className="chamber__moon">
@@ -309,7 +375,7 @@ function TrackOrbit({
 function Waveform({ color, active }: { color: string; active: number }) {
   const bars = Array.from({ length: 28 }, (_, index) => {
     const wave = 38 + Math.abs(Math.sin((index + active) * 0.65)) * 76;
-    return <i key={index} style={{ height: `${wave}px`, background: color }} />;
+    return <i key={index} style={{ height: `${wave}px`, background: color, color }} />;
   });
 
   return <div className="waveform">{bars}</div>;
@@ -336,16 +402,6 @@ function StudioRoom() {
 }
 
 function ThemeConstellation({ activeTrack }: { activeTrack: Track }) {
-  const themes = [
-    "Mortality",
-    "Time",
-    "Capital",
-    "Motion",
-    "Empathy",
-    "Identity",
-    "Totality",
-  ];
-
   return (
     <section className="section section--themes" id="themes" aria-labelledby="themes-title">
       <div className="section__heading">
@@ -358,10 +414,10 @@ function ThemeConstellation({ activeTrack }: { activeTrack: Track }) {
           <strong>{activeTrack.theme}</strong>
           <span>{activeTrack.title}</span>
         </div>
-        {themes.map((theme, index) => (
+        {themeNames.map((theme, index) => (
           <span
             key={theme}
-            className="themeNode"
+            className={activeTrack.themes.includes(theme) ? "themeNode isLit" : "themeNode"}
             style={{ "--theme-index": index } as CSSProperties}
           >
             {theme}
@@ -401,7 +457,7 @@ function Legacy() {
       <div className="timeline">
         {legacy.map(([year, event]) => (
           <article className="timelineItem" key={year}>
-            <time>{year}</time>
+            <span className="timelineItem__when">{year}</span>
             <p>{event}</p>
           </article>
         ))}
