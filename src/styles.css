@@ -54,6 +54,7 @@ main {
 .hero {
   position: relative;
   min-height: 96vh;
+  min-height: 96svh;
   display: grid;
   align-items: center;
   padding: clamp(1rem, 2vw, 2rem);
@@ -313,8 +314,8 @@ h3 {
 .section {
   padding: clamp(4rem, 9vw, 8rem) clamp(1rem, 4vw, 4rem);
   background:
-    linear-gradient(180deg, #050505, rgba(5, 5, 5, 0.92)),
-    radial-gradient(circle at 85% 20%, color-mix(in srgb, var(--track-color), transparent 78%), transparent 24rem);
+    radial-gradient(circle at 85% 20%, color-mix(in srgb, var(--track-color), transparent 88%), transparent 24rem),
+    linear-gradient(180deg, #050505, rgba(5, 5, 5, 0.92));
 }
 
 .section__heading {
@@ -349,6 +350,11 @@ h3 {
   color: rgba(247, 242, 232, 0.72);
   background: rgba(255, 255, 255, 0.04);
   text-align: left;
+}
+
+:focus-visible {
+  outline: 2px solid var(--track-color);
+  outline-offset: 3px;
 }
 
 .trackNode:hover,
@@ -448,8 +454,8 @@ h3 {
 
 .section--studio {
   background:
-    linear-gradient(180deg, rgba(5, 5, 5, 0.96), #0a0708),
-    radial-gradient(circle at 20% 30%, rgba(255, 178, 62, 0.08), transparent 26rem);
+    radial-gradient(circle at 20% 30%, rgba(255, 178, 62, 0.08), transparent 26rem),
+    linear-gradient(180deg, rgba(5, 5, 5, 0.96), #0a0708);
 }
 
 .studioGrid,
@@ -567,6 +573,16 @@ h3 {
     rotate(calc(-1 * var(--angle)));
   font-size: clamp(0.72rem, 1.8vw, 0.92rem);
   font-weight: 800;
+  transition:
+    border-color 300ms ease,
+    background 300ms ease,
+    box-shadow 300ms ease;
+}
+
+.themeNode.isLit {
+  border-color: var(--track-color);
+  background: color-mix(in srgb, var(--track-color), black 78%);
+  box-shadow: 0 0 26px color-mix(in srgb, var(--track-color), transparent 55%);
 }
 
 .peopleGrid {
@@ -675,9 +691,21 @@ h3 {
     font-size: clamp(3.3rem, 18vw, 5rem);
   }
 
+  .hero {
+    align-content: center;
+    gap: 2rem;
+    padding-top: 4.5rem;
+  }
+
+  .hero__content {
+    padding-top: 0;
+  }
+
   .hero__footer {
-    grid-template-columns: 1fr;
-    gap: 0.25rem;
+    position: static;
+    grid-template-columns: repeat(3, auto);
+    justify-content: start;
+    gap: 1.25rem;
   }
 
   .hero__footer span,
