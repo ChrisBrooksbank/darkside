@@ -222,7 +222,11 @@ function Hero({
     <section className="hero" aria-labelledby="hero-title">
       <img
         className="hero__image"
-        src="/assets/hero-lunar-prism.png"
+        src="/assets/hero-lunar-prism.webp"
+        width={1885}
+        height={834}
+        fetchPriority="high"
+        decoding="async"
         alt="A dark lunar horizon with a distant glass prism refracting spectral light."
       />
       <div className="hero__shade" />
@@ -453,7 +457,7 @@ function Legacy() {
       <div className="timeline">
         {legacy.map(([year, event]) => (
           <article className="timelineItem" key={year}>
-            <time>{year}</time>
+            <span className="timelineItem__when">{year}</span>
             <p>{event}</p>
           </article>
         ))}

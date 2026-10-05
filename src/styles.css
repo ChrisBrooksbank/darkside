@@ -614,7 +614,7 @@ h3 {
   padding: 1rem;
 }
 
-.timelineItem time {
+.timelineItem__when {
   color: var(--track-color);
   font-weight: 900;
   font-size: 1.2rem;
