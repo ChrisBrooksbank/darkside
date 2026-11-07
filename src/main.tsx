@@ -21,6 +21,9 @@ import { Journey, FunFacts, PulseLab, Quiz, Sleeve, StatsStrip } from "./extras"
 import { timeline, trackDetails } from "./content";
 import "./styles.css";
 import "./extras.css";
+import "./desk.css";
+import { MixingDesk } from "./desk";
+import { TimeDive } from "./timeDive";
 
 type Track = {
   title: string;
@@ -198,6 +201,8 @@ function App() {
       <Hero playing={playing} setPlaying={setPlaying} />
       <StatsStrip />
       <TrackOrbit active={active} setActive={setActive} selected={selected} />
+      <MixingDesk />
+      <TimeDive />
       <PulseLab />
       <StudioRoom />
       <Sleeve />
@@ -232,6 +237,7 @@ function Hero({
       <PrismField playing={playing} />
       <nav className="topbar" aria-label="Primary">
         <a href="#orbit">Tracks</a>
+        <a href="#desk">Mix</a>
         <a href="#lab">Lab</a>
         <a href="#studio">Studio</a>
         <a href="#facts">Facts</a>
@@ -257,6 +263,9 @@ function Hero({
           </button>
           <a className="textLink" href="#orbit">
             Enter the prism
+          </a>
+          <a className="textLink" href="#desk">
+            Build your own mix
           </a>
         </div>
       </div>
