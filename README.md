@@ -18,6 +18,10 @@
 
 # Enter The Prism
 
+<!-- hub-link -->
+> Part of [Chris's app hub](https://chrisbrooksbank-hub.netlify.app) - a directory of all my deployed apps.
+<!-- /hub-link -->
+
 > *A heartbeat in the dark. A clock you didn't notice was ticking. A cash register that sounds suspiciously like a groove.*
 
 **Enter The Prism** is an interactive tribute to Pink Floyd's *The Dark Side of the Moon*. It isn't a fan wiki or a playlist wrapper. It's a small **listening observatory** built around pulse, breath, time, money, fracture and eclipse.
