@@ -17,7 +17,10 @@ import {
   Timer,
   Waves,
 } from "lucide-react";
+import { Journey, FunFacts, PulseLab, Quiz, Sleeve, StatsStrip } from "./extras";
+import { timeline, trackDetails } from "./content";
 import "./styles.css";
+import "./extras.css";
 
 type Track = {
   title: string;
@@ -183,15 +186,6 @@ const people = [
   "Hipgnosis + George Hardie / image as instant myth",
 ];
 
-const legacy = [
-  ["1972", "The suite takes shape live before the studio version hardens into orbit."],
-  ["1973", "The album is released and quickly becomes a shared cultural object."],
-  ["1970s", "The sleeve's prism becomes one of rock's most durable visual symbols."],
-  ["Surround", "Quadraphonic and later surround mixes underline the record's spatial imagination."],
-  ["50th", "Anniversary editions, screenings, and visual tributes renew the planetarium scale."],
-  ["Now", "The album remains a rite of passage because its fears still sound current."],
-];
-
 function App() {
   const [active, setActive] = useState(0);
   const [playing, setPlaying] = useState(
@@ -202,9 +196,14 @@ function App() {
   return (
     <main style={{ "--track-color": selected.color } as CSSProperties}>
       <Hero playing={playing} setPlaying={setPlaying} />
+      <StatsStrip />
       <TrackOrbit active={active} setActive={setActive} selected={selected} />
+      <PulseLab />
       <StudioRoom />
+      <Sleeve />
       <ThemeConstellation activeTrack={selected} />
+      <FunFacts />
+      <Quiz />
       <PeopleSystem />
       <Legacy />
     </main>
@@ -232,10 +231,12 @@ function Hero({
       <div className="hero__shade" />
       <PrismField playing={playing} />
       <nav className="topbar" aria-label="Primary">
-        <a href="#orbit">Orbit</a>
+        <a href="#orbit">Tracks</a>
+        <a href="#lab">Lab</a>
         <a href="#studio">Studio</a>
-        <a href="#themes">Themes</a>
-        <a href="#legacy">Legacy</a>
+        <a href="#facts">Facts</a>
+        <a href="#quiz">Quiz</a>
+        <a href="#legacy">Story</a>
       </nav>
       <div className="hero__content">
         <p className="kicker">An interactive tribute</p>
@@ -291,6 +292,7 @@ function TrackOrbit({
   selected: Track;
 }) {
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const detail = trackDetails[active];
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const last = tracks.length - 1;
@@ -315,6 +317,16 @@ function TrackOrbit({
         <p className="kicker">The orbit</p>
         <h2 id="orbit-title">One continuous pressure change</h2>
       </div>
+      <Journey
+        items={tracks.map((track, index) => ({
+          title: track.title,
+          color: track.color,
+          seconds: trackDetails[index].seconds,
+          length: trackDetails[index].length,
+        }))}
+        active={active}
+        onSelect={setActive}
+      />
       <div className="orbitLayout">
         <div
           className="trackDial"
@@ -361,6 +373,17 @@ function TrackOrbit({
             <h3>{selected.title}</h3>
             <p className="chamber__accent">{selected.accent}</p>
             <p>{selected.note}</p>
+            <p className="chamber__meta">
+              {detail.length} · written by {detail.writers}
+            </p>
+            <ul className="chamber__facts">
+              {detail.facts.map((fact) => (
+                <li key={fact}>{fact}</li>
+              ))}
+            </ul>
+            <p className="listenFor">
+              <strong>Listen for:</strong> {detail.listenFor}
+            </p>
             <div className="signal">
               <Headphones aria-hidden="true" />
               <span>{selected.signal}</span>
@@ -451,11 +474,11 @@ function Legacy() {
   return (
     <section className="section section--legacy" id="legacy" aria-labelledby="legacy-title">
       <div className="section__heading">
-        <p className="kicker">Legacy</p>
-        <h2 id="legacy-title">The orbit keeps returning</h2>
+        <p className="kicker">The story</p>
+        <h2 id="legacy-title">From a live experiment to a fixture of the charts</h2>
       </div>
       <div className="timeline">
-        {legacy.map(([year, event]) => (
+        {timeline.map(([year, event]) => (
           <article className="timelineItem" key={year}>
             <span className="timelineItem__when">{year}</span>
             <p>{event}</p>
